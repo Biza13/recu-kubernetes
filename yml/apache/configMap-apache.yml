@@ -17,6 +17,9 @@ data:
     LoadModule authn_file_module modules/mod_authn_file.so
     LoadModule authz_user_module modules/mod_authz_user.so
     LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so
+    LoadModule rewrite_module modules/mod_rewrite.so
+    LoadModule dir_module modules/mod_dir.so
+
 
     # Configuración básica
     ServerRoot "/usr/local/apache2"
@@ -34,7 +37,7 @@ data:
     <VirtualHost *:80>
         ServerName begona.work.gd
 
-        ErrorLog /usr/local/apache2/logs/bego_error.log
+        ErrorLog /usr/local/apache2/logs/begona_error.log
 
         Redirect permanent / https://begona.work.gd/
 
@@ -44,17 +47,18 @@ data:
     <VirtualHost *:443>
         ServerName begona.work.gd
 
-        DocumentRoot /var/www/html/public
+        DocumentRoot /var/www/html/symfony/public
+        DirectoryIndex index.php index.html
 
-        <Directory /var/www/html/public>
+        <Directory /var/www/html/symfony/public>
             Options Indexes FollowSymLinks
             AllowOverride All
             Require all granted
         </Directory>
 
-        # Configurar proxy a PHP-FPM
+        # Configurar proxy a PHP. Tienes que poner el mismo nombre que en el docker compose en este caso php
         <FilesMatch \.php$>
-            SetHandler "proxy:fcgi://phpfpm:9000"
+            SetHandler "proxy:fcgi://php:9000"
         </FilesMatch>
 
         SSLEngine on
@@ -63,4 +67,4 @@ data:
         SSLCertificateChainFile /usr/local/apache2/certs/begona/ca.cer
 
         ErrorLog /usr/local/apache2/logs/bego_error.log
-    </VirtualHost>    
+    </VirtualHost>     

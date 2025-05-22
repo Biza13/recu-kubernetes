@@ -1,0 +1,3 @@
+FROM httpd:2.4
+
+COPY ./cert-begona /usr/local/apache2/certs/begona

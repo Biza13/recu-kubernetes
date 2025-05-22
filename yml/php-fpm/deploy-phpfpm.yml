@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: phpfpm-deployment
   labels:
-    app: apphpfpmache
+    app: phpfpm
 spec:
   revisionHistoryLimit: 2
   strategy: 
@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: phpfpm
-        image: php:8.2-fpm
+        image: bego13/phpfpm-symfony:latest
         ports:
         - containerPort: 9000
         volumeMounts:
