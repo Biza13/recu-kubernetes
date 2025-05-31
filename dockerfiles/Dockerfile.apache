@@ -1,3 +1,8 @@
 FROM httpd:2.4
 
 COPY ./cert-begona /usr/local/apache2/certs/begona
+
+RUN chown -R www-data:www-data /usr/local/apache2/certs/begona && \
+    chmod 600 /usr/local/apache2/certs/begona/begona.work.gd.key && \
+    chmod 644 /usr/local/apache2/certs/begona/begona.work.gd.cer && \
+    chmod 644 /usr/local/apache2/certs/begona/ca.cer

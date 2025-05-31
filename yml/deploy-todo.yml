@@ -17,6 +17,8 @@ spec:
       labels:
         app: symfony-web 
     spec:
+      securityContext: # para los permisos de las carpetas
+        fsGroup: 33
       containers:
       # Contenedor de Apache
       - name: apache 
@@ -31,17 +33,24 @@ spec:
           subPath: httpd.conf 
         # Volumen para la app en el efs
         - name: efs-symfony-volume
-          mountPath: /var/www/html/symfony/public
+          mountPath: /var/www/html/symfony
 
       # Contenedor de PHP-FPM
       - name: phpfpm 
         image: bego13/phpfpm-symfony:latest
         ports:
         - containerPort: 9000
+        env: #  Variables de entorno para PHP-FPM
+        - name: DATABASE_URL
+          value: "mysql://admin:adminadmin@rds-service:3306/mywallcopia?serverVersion=11.4.5-MariaDB&charset=utf8mb4"
+        - name: APP_ENV
+          value: "prod" # Para EKS siempre en producción
+        - name: APP_SECRET
+          value: "esteEsMiSecretoLargoYSeguro"
         volumeMounts:
         # Volumen para la app en el efs
         - name: efs-symfony-volume
-          mountPath: /var/www/html 
+          mountPath: /var/www/html/symfony
 
       # Definición de los volumenes a montar
       volumes:

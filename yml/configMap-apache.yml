@@ -19,7 +19,7 @@ data:
     LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so
     LoadModule rewrite_module modules/mod_rewrite.so
     LoadModule dir_module modules/mod_dir.so
-
+    LoadModule log_config_module modules/mod_log_config.so
 
     # Configuración básica
     ServerRoot "/usr/local/apache2"
@@ -30,14 +30,15 @@ data:
     ServerName localhost
 
     # Habilitar logs
-    ErrorLog /usr/local/apache2/logs/error.log
+    ErrorLog /proc/self/fd/2 
+    CustomLog /proc/self/fd/1 common 
     LogLevel debug
 
     # VirtualHost para bego.work.gd app
     <VirtualHost *:80>
         ServerName begona.work.gd
 
-        ErrorLog /usr/local/apache2/logs/begona_error.log
+        #ErrorLog /usr/local/apache2/logs/begona_error.log
 
         Redirect permanent / https://begona.work.gd/
 
@@ -52,8 +53,17 @@ data:
 
         <Directory /var/www/html/symfony/public>
             Options Indexes FollowSymLinks
-            AllowOverride All
+            AllowOverride None
             Require all granted
+
+            #el allowOverride none de arriba y esta seccion de abajo es porque no tenemos un .htaccess en la app de symfony
+            #por lo que apache no sabe redirigir el trafico. Con esto se soluciona
+            <IfModule mod_rewrite.c>
+               RewriteEngine On
+                RewriteCond %{REQUEST_FILENAME} !-f
+                RewriteCond %{REQUEST_FILENAME} !-d
+                RewriteRule ^(.*)$ index.php [QSA,L]
+            </IfModule>
         </Directory>
 
         # Configurar proxy a PHP. Tienes que poner el mismo nombre que en el docker compose en este caso php
@@ -66,5 +76,5 @@ data:
         SSLCertificateKeyFile /usr/local/apache2/certs/begona/begona.work.gd.key
         SSLCertificateChainFile /usr/local/apache2/certs/begona/ca.cer
 
-        ErrorLog /usr/local/apache2/logs/bego_error.log
+        #ErrorLog /usr/local/apache2/logs/bego_error.log
     </VirtualHost>     
