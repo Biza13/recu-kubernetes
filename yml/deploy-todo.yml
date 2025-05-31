@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: symfony-deployment 
+  labels:
+    app: symfony-web 
+spec:
+  revisionHistoryLimit: 2 
+  strategy:
+    type: RollingUpdate 
+  replicas: 2 
+  selector:
+    matchLabels:
+      app: symfony-web 
+  template:
+    metadata:
+      labels:
+        app: symfony-web 
+    spec:
+      containers:
+      # Contenedor de Apache
+      - name: apache 
+        image: bego13/apache-symfony:latest 
+        ports:
+        - containerPort: 80 
+        - containerPort: 443 
+        volumeMounts:
+        # Volumen para el congif map
+        - name: apache-config-volume
+          mountPath: /usr/local/apache2/conf/httpd.conf
+          subPath: httpd.conf 
+        # Volumen para la app en el efs
+        - name: efs-symfony-volume
+          mountPath: /var/www/html/symfony/public
+
+      # Contenedor de PHP-FPM
+      - name: phpfpm 
+        image: bego13/phpfpm-symfony:latest
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        # Volumen para la app en el efs
+        - name: efs-symfony-volume
+          mountPath: /var/www/html 
+
+      # Definición de los volumenes a montar
+      volumes:
+      - name: apache-config-volume
+        configMap:
+          name: apache-config
+
+      - name: efs-symfony-volume
+        persistentVolumeClaim:
+          claimName: efs-pvc 

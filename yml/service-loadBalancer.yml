@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-loadBalancer 
+  namespace: default   
+  labels:
+    app: symfony-web 
+spec:
+  selector:
+    # tiene que coincidir con las etiquetas de los Pods
+    app: symfony-web 
+  ports:
+    - protocol: TCP
+      port: 80  
+      targetPort: 80 
+      name: http
+    - protocol: TCP
+      port: 443 
+      targetPort: 443
+      name: https
+  type: LoadBalancer 
