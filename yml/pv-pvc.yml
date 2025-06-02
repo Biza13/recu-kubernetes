@@ -12,7 +12,7 @@ spec:
   storageClassName: efs-sc
   csi:
     driver: efs.csi.aws.com
-    volumeHandle: id de efs # Poner ID de EFS
+    volumeHandle: fs-05b10c088dde2a7d4
 
 ---
 
