@@ -1,20 +1,23 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-loadBalancer 
+  name: service-loadbalancer 
   labels:
-    app: symfony-web 
+    app: symfony-web
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "tcp"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
 spec:
+  type: LoadBalancer
   selector:
-    # tiene que coincidir con las etiquetas de los Pods
-    app: symfony-web 
+    app: symfony-web
   ports:
     - protocol: TCP
-      port: 80  
-      targetPort: 80 
+      port: 80
+      targetPort: 80
       name: http
     - protocol: TCP
-      port: 443 
+      port: 443
       targetPort: 443
       name: https
-  type: LoadBalancer 

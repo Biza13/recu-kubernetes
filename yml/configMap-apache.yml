@@ -36,7 +36,7 @@ data:
 
     # VirtualHost para bego.work.gd app
     <VirtualHost *:80>
-        ServerName begona.work.gd
+        ServerName www.begona.work.gd
 
         #ErrorLog /usr/local/apache2/logs/begona_error.log
 
@@ -46,7 +46,7 @@ data:
 
     # VirtualHost https para bego.work.gd
     <VirtualHost *:443>
-        ServerName begona.work.gd
+        ServerName www.begona.work.gd
 
         DocumentRoot /var/www/html/symfony/public
         DirectoryIndex index.php index.html
